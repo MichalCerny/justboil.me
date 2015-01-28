@@ -69,34 +69,37 @@ class Uploader extends CI_Controller {
 		// Load uploader
 		$this->load->library('upload', $config);
 		
+		if ($this->upload->do_upload()){
+			$original = $this->upload->data();
+		}
+		
 		if ($this->upload->do_upload()) // Success
 		{
 			// General result data
 			$result = $this->upload->data();
 			
-			// Shall we resize an image?
-			if ($conf['allow_resize'] and $conf['max_width'] > 0 and $conf['max_height'] > 0 and (($result['image_width'] > $conf['max_width']) or ($result['image_height'] > $conf['max_height'])))
-			{				
-				// Resizing parameters
-				$resizeParams = array
-				(
-					'source_image'	=> $result['full_path'],
-					'new_image'		=> $result['full_path'],
-					'width'			=> $conf['max_width'],
-					'height'		=> $conf['max_height']
-				);
+
+			$ration=$result['image_width']/$result['image_height'];
+			$resizeParams = array
+			(
+				'source_image'	=> $result['full_path'],
+				'new_image'		=> $result['full_path'],
+				'width'			=> $conf['max_width'],
+				'height'		=> $conf['max_width']/$ration
+			);
 				
-				// Load resize library
-				$this->load->library('image_lib', $resizeParams);
+			// Load resize library
+			$this->load->library('image_lib', $resizeParams);
 				
-				// Do resize
-				$this->image_lib->resize();
-			}
+			// Do resize
+			$this->image_lib->resize();
 			
 			// Add our stuff
+			
 			$result['result']		= "file_uploaded";
 			$result['resultcode']	= 'ok';
-			$result['file_name']	= $conf['img_path'] . '/' . $result['file_name'];
+			$result['file_name_thumb']	= $conf['img_path'] . '' . $result['file_name'];
+			$result['file_name']	= $conf['img_path'] . '' . $original['file_name'];			
 			
 			// Output to user
 			$this->load->view('ajax_upload_result', $result);
