@@ -6,6 +6,7 @@
 <script language="javascript" type="text/javascript">
 	window.parent.window.jbImagesDialog.uploadFinish({
 		filename:'<?php echo $file_name; ?>',
+		filenamethumb:'<?php echo $file_name_thumb; ?>',	
 		result: '<?php echo $result; ?>',
 		resultCode: '<?php echo $resultcode; ?>'
 	});
